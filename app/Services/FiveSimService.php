@@ -29,11 +29,49 @@ class FiveSimService
     {
         try {
             $response = Http::get("{$this->apiUrl}/guest/countries");
-            return $response->json();
+            
+            if ($response->successful() && !empty($response->json())) {
+                return $response->json();
+            }
+            
+            Log::warning('5sim API returned empty countries list or unsuccessful response');
+            return $this->getFallbackCountries();
         } catch (RequestException $e) {
-            Log::error('Failed to fetch countries from 5sim: ' . $e->getMessage());
-            return [];
+            Log::error('Failed to fetch countries from 5sim: ' . $e->getMessage(), [
+                'api_url' => $this->apiUrl,
+                'status_code' => $e->getCode()
+            ]);
+            return $this->getFallbackCountries();
+        } catch (\Exception $e) {
+            Log::error('Unexpected error fetching countries from 5sim: ' . $e->getMessage());
+            return $this->getFallbackCountries();
         }
+    }
+    
+    /**
+     * Provide fallback countries if API fails
+     * 
+     * @return array
+     */
+    private function getFallbackCountries(): array
+    {
+        return [
+            'usa' => 'United States',
+            'canada' => 'Canada',
+            'uk' => 'United Kingdom',
+            'germany' => 'Germany',
+            'france' => 'France',
+            'india' => 'India',
+            'australia' => 'Australia',
+            'brazil' => 'Brazil',
+            'japan' => 'Japan',
+            'china' => 'China',
+            'russia' => 'Russia',
+            'mexico' => 'Mexico',
+            'indonesia' => 'Indonesia',
+            'netherlands' => 'Netherlands',
+            'spain' => 'Spain'
+        ];
     }
 
     /**

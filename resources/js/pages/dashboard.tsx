@@ -27,23 +27,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Sample OTP services - you can replace with real service data
-const otpServices = [
-    { value: 'whatsapp', label: 'WhatsApp' },
-    { value: 'telegram', label: 'Telegram' },
-    { value: 'facebook', label: 'Facebook' },
-    { value: 'instagram', label: 'Instagram' },
-    { value: 'gmail', label: 'Gmail' },
-    { value: 'twitter', label: 'Twitter' },
-    { value: 'tiktok', label: 'TikTok' },
-    { value: 'indiamart', label: 'Indiamart' },
-    { value: 'snapchat', label: 'Snapchat' },
-];
 
 export default function Dashboard() {
-    const { auth, countries, transactions: transactionsData } = usePage<SharedData & {
-        countries: Record<string, any>,
-        transactions: any
+    const { auth, countries = {}, transactions: transactionsData = [] } = usePage<SharedData & {
+        countries?: Record<string, any>,
+        transactions?: any
     }>().props;
     
     console.log('Countries data:', countries); // Debug log for countries
@@ -191,7 +179,8 @@ export default function Dashboard() {
     
     // Function to get country name display
     const getCountryName = (code: string): string => {
-        const country = countries?.[code];
+        if (!countries) return code;
+        const country = countries[code];
         return renderSafely(country) || code;
     };
     

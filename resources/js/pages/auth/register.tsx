@@ -33,13 +33,13 @@ export default function Register() {
         post(route('register'), {
             onSuccess: () => {
                 toast.success('Account created successfully!', {
-                    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+                    icon: <CheckCircle className="h-4 w-4 text-green-500" />,
                     duration: 5000,
                 });
             },
             onError: () => {
                 toast.error('There was a problem creating your account.', {
-                    icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+                    icon: <AlertCircle className="h-4 w-4 text-red-500" />,
                     duration: 5000,
                 });
             },
@@ -51,12 +51,12 @@ export default function Register() {
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
             <Head title="Register" />
             <Toaster position="top-right" />
-            <form className="flex flex-col gap-8" onSubmit={submit}>
-                <div className="grid gap-7">
-                    <div className="grid gap-3">
-                        <Label htmlFor="name" className="text-xl font-semibold sm:text-2xl">Full Name</Label>
+            <form className="flex flex-col gap-5" onSubmit={submit}>
+                <div className="grid gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="name" className="text-base font-semibold sm:text-lg">Full Name</Label>
                         <div className="relative">
-                            <UserCircle className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <UserCircle className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="name"
                                 type="text"
@@ -68,16 +68,16 @@ export default function Register() {
                                 onChange={(e) => setData('name', e.target.value)}
                                 disabled={processing}
                                 placeholder="John Doe"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.name} className="mt-1 text-lg" />
+                        <InputError message={errors.name} className="text-sm" />
                     </div>
 
-                    <div className="grid gap-3">
-                        <Label htmlFor="username" className="text-xl font-semibold sm:text-2xl">Username</Label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="username" className="text-base font-semibold sm:text-lg">Username</Label>
                         <div className="relative">
-                            <User className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="username"
                                 type="text"
@@ -88,16 +88,16 @@ export default function Register() {
                                 onChange={(e) => setData('username', e.target.value)}
                                 disabled={processing}
                                 placeholder="username123"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.username} className="text-lg" />
+                        <InputError message={errors.username} className="text-sm" />
                     </div>
 
-                    <div className="grid gap-3">
-                        <Label htmlFor="email" className="text-xl font-semibold sm:text-2xl">Email Address</Label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="email" className="text-base font-semibold sm:text-lg">Email Address</Label>
                         <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="email"
                                 type="email"
@@ -108,16 +108,16 @@ export default function Register() {
                                 onChange={(e) => setData('email', e.target.value)}
                                 disabled={processing}
                                 placeholder="john.doe@example.com"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.email} className="text-lg" />
+                        <InputError message={errors.email} className="text-sm" />
                     </div>
 
-                    <div className="grid gap-3">
-                        <Label htmlFor="password" className="text-xl font-semibold sm:text-2xl">Password</Label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password" className="text-base font-semibold sm:text-lg">Password</Label>
                         <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="password"
                                 type="password"
@@ -128,16 +128,16 @@ export default function Register() {
                                 onChange={(e) => setData('password', e.target.value)}
                                 disabled={processing}
                                 placeholder="••••••••"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.password} className="text-lg" />
+                        <InputError message={errors.password} className="text-sm" />
                     </div>
 
-                    <div className="grid gap-3">
-                        <Label htmlFor="password_confirmation" className="text-xl font-semibold sm:text-2xl">Confirm Password</Label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password_confirmation" className="text-base font-semibold sm:text-lg">Confirm Password</Label>
                         <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="password_confirmation"
                                 type="password"
@@ -148,29 +148,29 @@ export default function Register() {
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 disabled={processing}
                                 placeholder="••••••••"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.password_confirmation} className="text-lg" />
+                        <InputError message={errors.password_confirmation} className="text-sm" />
                     </div>
 
                     <Button 
                         type="submit" 
-                        className="mt-4 w-full h-14 sm:h-16 text-xl rounded-xl font-bold transition-all hover:scale-[1.01] hover:shadow-lg" 
+                        className="mt-2 w-full h-10 sm:h-11 text-base rounded-md font-semibold transition-all hover:scale-[1.01] hover:shadow-md" 
                         tabIndex={6} 
                         disabled={processing}
                     >
-                        {processing && <LoaderCircle className="h-6 w-6 animate-spin mr-3" />}
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
                         Create Account
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-lg sm:text-xl">
+                <div className="text-muted-foreground text-center text-sm sm:text-base">
                     Already have an account?{' '}
                     <TextLink 
                         href={route('login')} 
                         tabIndex={7} 
-                        className="text-lg sm:text-xl font-semibold hover:text-primary transition-colors"
+                        className="text-sm sm:text-base font-semibold hover:text-primary transition-colors"
                     >
                         Log in here
                     </TextLink>

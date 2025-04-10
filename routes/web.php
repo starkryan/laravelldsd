@@ -3,6 +3,7 @@
 use App\Http\Controllers\OtpController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Services\FiveSimService;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -10,7 +11,14 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $fiveSimService = new FiveSimService();
+        $countries = $fiveSimService->getCountries();
+        $transactions = auth()->user()->phoneTransactions()->latest()->take(5)->get();
+        
+        return Inertia::render('dashboard', [
+            'countries' => $countries,
+            'transactions' => $transactions
+        ]);
     })->name('dashboard');
     
     // OTP Routes

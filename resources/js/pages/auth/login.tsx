@@ -35,13 +35,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         post(route('login'), {
             onSuccess: () => {
                 toast.success('Logged in successfully!', {
-                    icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+                    icon: <CheckCircle className="h-4 w-4 text-green-500" />,
                     duration: 5000,
                 });
             },
             onError: () => {
                 toast.error('Invalid credentials. Please try again.', {
-                    icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+                    icon: <AlertCircle className="h-4 w-4 text-red-500" />,
                     duration: 5000,
                 });
             },
@@ -54,14 +54,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             <Head title="Log in" />
             <Toaster position="top-right" />
             
-            {status && <div className="mb-6 text-center text-lg font-medium text-green-600 bg-green-50 p-4 rounded-xl">{status}</div>}
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-600 bg-green-50 p-3 rounded-md">{status}</div>}
 
-            <form className="flex flex-col gap-8" onSubmit={submit}>
-                <div className="grid gap-7">
-                    <div className="grid gap-3">
-                        <Label htmlFor="email" className="text-xl font-semibold sm:text-2xl">Email Address</Label>
+            <form className="flex flex-col gap-5" onSubmit={submit}>
+                <div className="grid gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email" className="text-base font-semibold sm:text-lg">Email Address</Label>
                         <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="email"
                                 type="email"
@@ -72,19 +72,19 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="john.doe@example.com"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.email} className="text-lg" />
+                        <InputError message={errors.email} className="text-sm" />
                     </div>
 
-                    <div className="grid gap-3">
+                    <div className="grid gap-2">
                         <div className="flex items-center justify-between">
-                            <Label htmlFor="password" className="text-xl font-semibold sm:text-2xl">Password</Label>
+                            <Label htmlFor="password" className="text-base font-semibold sm:text-lg">Password</Label>
                             {canResetPassword && (
                                 <TextLink 
                                     href={route('password.request')} 
-                                    className="text-lg font-medium sm:text-xl hover:text-primary transition-colors" 
+                                    className="text-sm font-medium sm:text-base hover:text-primary transition-colors" 
                                     tabIndex={5}
                                 >
                                     Forgot password?
@@ -92,7 +92,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             )}
                         </div>
                         <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-muted-foreground" />
+                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="password"
                                 type="password"
@@ -102,41 +102,41 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="••••••••"
-                                className="h-14 sm:h-16 text-lg sm:text-xl pl-14 pr-6 rounded-xl border-2 focus-visible:ring-4 focus-visible:ring-primary/20"
+                                className="h-10 sm:h-11 text-sm sm:text-base pl-10 pr-4 rounded-md border focus-visible:ring-2 focus-visible:ring-primary/20"
                             />
                         </div>
-                        <InputError message={errors.password} className="text-lg" />
+                        <InputError message={errors.password} className="text-sm" />
                     </div>
 
-                    <div className="flex items-center space-x-3 mt-2">
+                    <div className="flex items-center space-x-2 mt-1">
                         <Checkbox
                             id="remember"
                             name="remember"
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
-                            className="h-6 w-6 rounded-md border-2"
+                            className="h-4 w-4 rounded-sm border"
                         />
-                        <Label htmlFor="remember" className="text-lg font-medium sm:text-xl">Remember me</Label>
+                        <Label htmlFor="remember" className="text-sm font-medium sm:text-base">Remember me</Label>
                     </div>
 
                     <Button 
                         type="submit" 
-                        className="mt-4 w-full h-14 sm:h-16 text-xl rounded-xl font-bold transition-all hover:scale-[1.01] hover:shadow-lg" 
+                        className="mt-2 w-full h-10 sm:h-11 text-base rounded-md font-semibold transition-all hover:scale-[1.01] hover:shadow-md" 
                         tabIndex={4} 
                         disabled={processing}
                     >
-                        {processing && <LoaderCircle className="h-6 w-6 animate-spin mr-3" />}
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
                         Log in
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-lg sm:text-xl">
+                <div className="text-muted-foreground text-center text-sm sm:text-base">
                     Don't have an account?{' '}
                     <TextLink 
                         href={route('register')} 
                         tabIndex={6} 
-                        className="text-lg sm:text-xl font-semibold hover:text-primary transition-colors"
+                        className="text-sm sm:text-base font-semibold hover:text-primary transition-colors"
                     >
                         Sign up here
                     </TextLink>

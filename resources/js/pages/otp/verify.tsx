@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { AlertCircle, CheckCircle, Clock, Loader2, MessageSquare, Phone, RefreshCw, X } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, Copy, Loader2, MessageSquare, Phone, RefreshCw, X } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 
@@ -11,6 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,6 +39,19 @@ export default function OtpVerify() {
     const [updatedTransaction, setUpdatedTransaction] = useState(transaction);
     const [timeLeft, setTimeLeft] = useState(0);
     const [progress, setProgress] = useState(100);
+    const [otpCode, setOtpCode] = useState<string>('');
+    const [phoneNumberCopied, setPhoneNumberCopied] = useState(false);
+    
+    // Extract OTP code from SMS text (looks for 4-8 digit numbers)
+    useEffect(() => {
+        if (updatedTransaction.sms_text) {
+            const regex = /\b\d{4,8}\b/g;
+            const matches = updatedTransaction.sms_text.match(regex);
+            if (matches && matches.length > 0) {
+                setOtpCode(matches[0]);
+            }
+        }
+    }, [updatedTransaction.sms_text]);
     
     // Calculate time left and progress
     useEffect(() => {
@@ -148,16 +165,36 @@ export default function OtpVerify() {
             });
     };
     
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast.success('Copied to clipboard!');
+    };
+    
+    const copyPhoneNumber = () => {
+        navigator.clipboard.writeText(transaction.phone_number);
+        setPhoneNumberCopied(true);
+        toast.success('Phone number copied to clipboard!');
+        
+        setTimeout(() => {
+            setPhoneNumberCopied(false);
+        }, 2000);
+    };
+    
+    // Determine if buttons should be shown
+    const hasReceivedSms = !!updatedTransaction.sms_text;
+    const canCancel = timeLeft > 0 && !hasReceivedSms;
+    const canFinish = hasReceivedSms;
+    
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Verify - ${transaction.service}`} />
             
             <div className="container max-w-4xl pb-10">
-                <Card className="overflow-hidden">
-                    <CardHeader className="bg-muted/50">
+                <Card className="overflow-hidden shadow-md">
+                    <CardHeader className="">
                         <div className="flex justify-between items-center">
                             <CardTitle className="text-2xl font-bold">
-                                {transaction.service} Verification
+                                {transaction.service}
                             </CardTitle>
                             <Badge variant={updatedTransaction.status === 'RECEIVED' ? 'default' : 'outline'}>
                                 {updatedTransaction.status}
@@ -165,8 +202,21 @@ export default function OtpVerify() {
                         </div>
                         <CardDescription className="flex items-center mt-1">
                             <Phone className="h-4 w-4 mr-1" />
-                            {transaction.phone_number} • {transaction.country} • {transaction.operator}
+                            <div className="relative flex-1">
+                                <Input type="text" value={transaction.phone_number} disabled className="font-mono" />
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className={`absolute top-0 right-0 h-full rounded-l-none opacity-80 hover:opacity-100 ${phoneNumberCopied ? 'text-green-500 border-green-500' : ''}`}
+                                    onClick={copyPhoneNumber}
+                                >
+                                    {phoneNumberCopied ? <CheckCircle className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                                </Button>
+                            </div>
                         </CardDescription>
+                        <div className="text-sm text-muted-foreground">
+                            {transaction.country} • {transaction.operator}
+                        </div>
                     </CardHeader>
                     
                     <CardContent className="p-6 space-y-6">
@@ -202,12 +252,12 @@ export default function OtpVerify() {
                                 
                                 {!updatedTransaction.sms_text && (
                                     <div className="flex items-center gap-2">
-                                        {isPolling && (
+                                        {/* {isPolling && (
                                             <div className="flex items-center text-sm text-muted-foreground">
                                                 <Loader2 className="h-4 w-4 animate-spin mr-1" />
                                                 Waiting for SMS...
                                             </div>
-                                        )}
+                                        )} */}
                                         <Button 
                                             variant="outline" 
                                             size="sm" 
@@ -244,19 +294,62 @@ export default function OtpVerify() {
                                 )}
                             </div>
                             
-                            {/* SMS text value: {JSON.stringify(Boolean(updatedTransaction.sms_text))} */}
-                            
                             {updatedTransaction.sms_text ? (
-                                <div className="bg-muted/50 p-4 rounded-md font-mono text-md break-words">
-                                    <div className="bg-green-50 dark:bg-green-950/20 p-3 mb-3 rounded border-l-4 border-green-500">
-                                        <div className="font-medium text-green-800 dark:text-green-400 mb-1">SMS Received!</div>
-                                        <div className="text-sm text-green-600 dark:text-green-300">
-                                            {updatedTransaction.sms_received_at ? 
-                                                `Received at: ${new Date(updatedTransaction.sms_received_at).toLocaleString()}` : 
-                                                'Processing...'}
-                                        </div>
-                                    </div>
-                                    <div className="whitespace-pre-wrap">{updatedTransaction.sms_text}</div>
+                                <div>
+                                    
+                                    
+                                    <Tabs defaultValue="formatted" className="w-full">
+                                        <TabsList className="grid w-full grid-cols-2 mb-2">
+                                            <TabsTrigger value="formatted">OTP Code</TabsTrigger>
+                                            <TabsTrigger value="message">Full Message</TabsTrigger>
+                                        </TabsList>
+                                        
+                                        <TabsContent value="formatted" className="py-2">
+                                            {otpCode ? (
+                                                <div className="flex flex-col items-center space-y-4">
+                                                    <InputOTP maxLength={otpCode.length} value={otpCode} disabled>
+                                                        <InputOTPGroup>
+                                                            {otpCode.split('').map((digit, index) => (
+                                                                <InputOTPSlot key={index} index={index} />
+                                                            ))}
+                                                        </InputOTPGroup>
+                                                    </InputOTP>
+                                                    
+                                                    <Button 
+                                                        variant="outline" 
+                                                        size="sm" 
+                                                        className="mt-2"
+                                                        onClick={() => copyToClipboard(otpCode)}
+                                                    >
+                                                        <Copy className="h-4 w-4 mr-2" />
+                                                        Copy OTP Code
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center text-muted-foreground p-4">
+                                                    No OTP code found in the message. Please check the full message.
+                                                </div>
+                                            )}
+                                        </TabsContent>
+                                        
+                                        <TabsContent value="message">
+                                            <div className="relative">
+                                                <Textarea 
+                                                    value={updatedTransaction.sms_text} 
+                                                    readOnly 
+                                                    className="min-h-32 bg-muted/10 font-mono text-sm"
+                                                />
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    className="absolute top-2 right-2 opacity-80 hover:opacity-100"
+                                                    onClick={() => copyToClipboard(updatedTransaction.sms_text)}
+                                                >
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                </Button>
+                                            </div>
+                                        </TabsContent>
+                                    </Tabs>
                                 </div>
                             ) : (
                                 <div className="bg-muted/50 p-4 rounded-md text-center text-muted-foreground h-24 flex items-center justify-center">
@@ -274,16 +367,6 @@ export default function OtpVerify() {
                                 </div>
                             )}
                         </div>
-                        
-                        {updatedTransaction.sms_text && (
-                            <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900 text-green-800 dark:text-green-300">
-                                <CheckCircle className="h-4 w-4" />
-                                <AlertTitle>SMS Received</AlertTitle>
-                                <AlertDescription className="text-green-700 dark:text-green-400">
-                                    Received at: {new Date(updatedTransaction.sms_received_at).toLocaleString()}
-                                </AlertDescription>
-                            </Alert>
-                        )}
                         
                         <div className="bg-muted/30 p-4 rounded-md grid grid-cols-2 gap-4 text-sm">
                             <div>
@@ -308,22 +391,14 @@ export default function OtpVerify() {
                     <CardFooter className="flex flex-col sm:flex-row gap-3 bg-muted/30 p-6">
                         <Button
                             variant="outline" 
-                            className="w-full"
+                            className="w-full sm:w-auto"
                             asChild
                         >
                             <Link href="/otp">Back to OTP Services</Link>
                         </Button>
                         
-                        {updatedTransaction.status === 'RECEIVED' ? (
-                            <Button
-                                className="w-full"
-                                onClick={handleFinishPurchase}
-                                disabled={isLoading}
-                            >
-                                Finish Order
-                            </Button>
-                        ) : (
-                            timeLeft > 0 && !updatedTransaction.sms_text && (
+                        <div className="flex flex-col sm:flex-row gap-3 w-full">
+                            {canCancel && (
                                 <Button
                                     variant="destructive"
                                     className="w-full"
@@ -332,8 +407,18 @@ export default function OtpVerify() {
                                 >
                                     Cancel & Refund
                                 </Button>
-                            )
-                        )}
+                            )}
+                            
+                            {canFinish && (
+                                <Button
+                                    className="w-full"
+                                    onClick={handleFinishPurchase}
+                                    disabled={isLoading}
+                                >
+                                    Finish Order
+                                </Button>
+                            )}
+                        </div>
                     </CardFooter>
                 </Card>
             </div>
